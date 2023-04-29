@@ -1,9 +1,6 @@
 package com.driver.services.impl;
 
-import com.driver.model.ParkingLot;
-import com.driver.model.Reservation;
-import com.driver.model.Spot;
-import com.driver.model.SpotType;
+import com.driver.model.*;
 import com.driver.repository.ParkingLotRepository;
 import com.driver.repository.PaymentRepository;
 import com.driver.repository.ReservationRepository;
@@ -14,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ParkingLotServiceImpl implements ParkingLotService {
@@ -59,7 +57,21 @@ public class ParkingLotServiceImpl implements ParkingLotService {
 
     @Override
     public void deleteSpot(int spotId) {
-        spotRepository1.deleteById(spotId);
+        Optional<Spot> optionalSpot = spotRepository1.findById(spotId);
+        if(optionalSpot.isPresent()) {
+            Spot spot = optionalSpot.get();
+
+            //get all the reservation list for this spot
+            List<Reservation> reservationList = spot.getReservationList();
+
+            for (Reservation reservation : reservationList) {
+                User user = reservation.getUser();
+                user.getReservationList().remove(reservation);//remove reservation from user
+            }
+            ParkingLot parkingLot = spot.getParkingLot();
+            parkingLot.getSpotList().remove(spot);//also remove spot from parking Lot
+            spotRepository1.delete(spot);
+        }
     }
 
     @Override
@@ -72,6 +84,14 @@ public class ParkingLotServiceImpl implements ParkingLotService {
 
     @Override
     public void deleteParkingLot(int parkingLotId) {
-        parkingLotRepository.deleteById(parkingLotId);
+        Optional<ParkingLot> optionalParkingLot = parkingLotRepository.findById(parkingLotId);
+        if (optionalParkingLot.isPresent()) {
+            ParkingLot parkingLot = optionalParkingLot.get();
+            List<Spot> spots = parkingLot.getSpotList();
+            for (Spot spot : spots) {
+                deleteSpot(spot.getId());
+            }
+            parkingLotRepository.deleteById(parkingLotId);
+        }
     }
 }
