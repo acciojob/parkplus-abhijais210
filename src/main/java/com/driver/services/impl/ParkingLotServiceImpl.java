@@ -59,18 +59,20 @@ public class ParkingLotServiceImpl implements ParkingLotService {
 
     @Override
     public void deleteSpot(int spotId) {
-        Spot spot = spotRepository1.findById(spotId).get();
+        try {
+            Spot spot = spotRepository1.findById(spotId).get();
 
-        //get all the reservation list for this spot
-        List<Reservation> reservationList = spot.getReservationList();
+            //get all the reservation list for this spot
+            List<Reservation> reservationList = spot.getReservationList();
 
-        for(Reservation reservation : reservationList){
-            paymentRepository.deleteById(reservation.getPayment().getId());
-            reservation.getUser().getReservationList().remove(reservation);//remove reservation from user
-            reservationRepository.deleteById(reservation.getId());
+            for (Reservation reservation : reservationList) {
+                reservation.getUser().getReservationList().remove(reservation);//remove reservation from user
+            }
+            spot.getParkingLot().getSpotList().remove(spot);//also remove spot from parking Lot
+            spotRepository1.deleteById(spotId);
+        }catch (Exception e){
+            throw new RuntimeException();
         }
-        spot.getParkingLot().getSpotList().remove(spot);//also remove spot from parking Lot
-        spotRepository1.deleteById(spotId);
     }
 
     @Override
@@ -83,12 +85,12 @@ public class ParkingLotServiceImpl implements ParkingLotService {
 
     @Override
     public void deleteParkingLot(int parkingLotId) {
-        ParkingLot parkingLot = parkingLotRepository.findById(parkingLotId).get();
-
-        List<Spot> spotList = parkingLot.getSpotList();
-        for(Spot spot : spotList){
-            deleteSpot(spot.getId());
-        }
+//        ParkingLot parkingLot = parkingLotRepository.findById(parkingLotId).get();
+//
+//        List<Spot> spotList = parkingLot.getSpotList();
+//        for(Spot spot : spotList){
+//            deleteSpot(spot.getId());
+//        }
         parkingLotRepository.deleteById(parkingLotId);
     }
 }

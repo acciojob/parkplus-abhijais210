@@ -25,15 +25,18 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(Integer userId) {
         //first we delete all the reservation history of this user
-        User user = userRepository4.findById(userId).get();
-        List<Reservation> reservationList = user.getReservationList();
-        for(Reservation reservation : reservationList){
-            paymentRepository.deleteById(reservation.getPayment().getId());
-            reservation.getSpot().setOccupied(false);//update the availability status
-            reservation.getSpot().getReservationList().remove(reservation);//remove from spot
-            reservationRepository.deleteById(reservation.getId());
+        try {
+            User user = userRepository4.findById(userId).get();
+            List<Reservation> reservationList = user.getReservationList();
+            for (Reservation reservation : reservationList) {
+                reservation.getSpot().setOccupied(false);//update the availability status
+                reservation.getSpot().getReservationList().remove(reservation);//remove from spot
+
+            }
+            userRepository4.deleteById(userId);
+        }catch (Exception e){
+            throw new RuntimeException();
         }
-        userRepository4.deleteById(userId);
     }
 
     @Override
