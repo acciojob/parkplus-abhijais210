@@ -5,7 +5,6 @@ import com.driver.repository.ParkingLotRepository;
 import com.driver.repository.ReservationRepository;
 import com.driver.repository.SpotRepository;
 import com.driver.repository.UserRepository;
-import com.driver.services.ParkingLotService;
 import com.driver.services.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -90,17 +89,17 @@ public class ReservationServiceImpl implements ReservationService {
         //get the spot with minimum pricePerHour
         for(Spot s : spotList){
             if(spotType.equals(SpotType.TWO_WHEELER)) {
-                if (!s.isOccupied() && s.getPricePerHour() < minPrice){
+                if (s.getOccupied() && s.getPricePerHour() < minPrice){
                   spot = s;
                   minPrice = s.getPricePerHour();
                 }
             } else if (spotType.equals(SpotType.FOUR_WHEELER)) {
-                if (!s.isOccupied() && !(s.getSpotType().equals(SpotType.TWO_WHEELER)) && s.getPricePerHour() < minPrice){
+                if (s.getOccupied() && !(s.getSpotType().equals(SpotType.TWO_WHEELER)) && s.getPricePerHour() < minPrice){
                     spot = s;
                     minPrice = s.getPricePerHour();
                 }
             }else {
-                if (!s.isOccupied() && s.getSpotType().equals(SpotType.OTHERS) && s.getPricePerHour() < minPrice){
+                if (s.getOccupied() && s.getSpotType().equals(SpotType.OTHERS) && s.getPricePerHour() < minPrice){
                     spot = s;
                     minPrice = s.getPricePerHour();
                 }
