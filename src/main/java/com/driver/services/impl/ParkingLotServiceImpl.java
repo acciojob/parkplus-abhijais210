@@ -20,8 +20,6 @@ public class ParkingLotServiceImpl implements ParkingLotService {
     @Autowired
     SpotRepository spotRepository1;
     @Autowired
-    ParkingLotRepository parkingLotRepository;
-    @Autowired
     PaymentRepository paymentRepository;
     @Autowired
     ReservationRepository reservationRepository;
@@ -36,7 +34,7 @@ public class ParkingLotServiceImpl implements ParkingLotService {
 
     @Override
     public Spot addSpot(int parkingLotId, Integer numberOfWheels, Integer pricePerHour) {
-        ParkingLot parkingLot = parkingLotRepository.findById(parkingLotId).get();
+        ParkingLot parkingLot = parkingLotRepository1.findById(parkingLotId).get();
         Spot spot = new Spot();
         spot.setOccupied(false);
         spot.setParkingLot(parkingLot);
@@ -62,7 +60,7 @@ public class ParkingLotServiceImpl implements ParkingLotService {
 
     @Override
     public Spot updateSpot(int parkingLotId, int spotId, int pricePerHour) {
-        ParkingLot parkingLot = parkingLotRepository.findById(parkingLotId).get();
+        ParkingLot parkingLot = parkingLotRepository1.findById(parkingLotId).get();
         Spot spot = spotRepository1.findById(spotId).get();
         spot.setPricePerHour(pricePerHour);
         return spotRepository1.save(spot);
@@ -70,6 +68,6 @@ public class ParkingLotServiceImpl implements ParkingLotService {
 
     @Override
     public void deleteParkingLot(int parkingLotId) {
-        parkingLotRepository.deleteById(parkingLotId);
+        parkingLotRepository1.deleteById(parkingLotId);
     }
 }

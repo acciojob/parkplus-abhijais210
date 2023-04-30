@@ -65,7 +65,7 @@ public class ReservationServiceImpl implements ReservationService {
         spot.setOccupied(true);
 
         spotRepository3.save(spot);
-        return reservationRepository3.save(reservation);
+        return reservation;
     }
     public Spot getMinAvailableSpot(int numberOfWheels,int parkingLotId) throws Exception {
         //get list pf all spot in that parkingLot
