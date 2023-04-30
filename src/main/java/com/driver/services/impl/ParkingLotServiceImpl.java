@@ -43,7 +43,7 @@ public class ParkingLotServiceImpl implements ParkingLotService {
         spot.setSpotType(getSpotType(numberOfWheels));
 
         parkingLot.getSpotList().add(spot);
-        spotRepository1.save(spot);
+        parkingLotRepository1.save(parkingLot);
         return spot;
     }
     public SpotType getSpotType(int numberOfWheels){
