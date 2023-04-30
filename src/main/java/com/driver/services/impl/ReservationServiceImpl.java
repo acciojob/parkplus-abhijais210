@@ -43,25 +43,27 @@ public class ReservationServiceImpl implements ReservationService {
         int minPrice = Integer.MAX_VALUE;
 
         //get the spot with minimum pricePerHour
-        for(Spot s : spotList){
-            if(s.getSpotType().equals(SpotType.TWO_WHEELER)) {
-                if(numberOfWheels <= 2) {
-                    if (!s.getOccupied() && s.getPricePerHour() < minPrice) {
+        for(Spot s : spotList) {
+            if (!s.getOccupied()) {
+                if (s.getSpotType().equals(SpotType.TWO_WHEELER)) {
+                    if (numberOfWheels <= 2) {
+                        if (s.getPricePerHour() < minPrice) {
+                            spot = s;
+                            minPrice = s.getPricePerHour();
+                        }
+                    }
+                } else if (s.getSpotType().equals(SpotType.FOUR_WHEELER)) {
+                    if (numberOfWheels <= 4) {
+                        if (s.getPricePerHour() < minPrice) {
+                            spot = s;
+                            minPrice = s.getPricePerHour();
+                        }
+                    }
+                } else {
+                    if (s.getPricePerHour() < minPrice) {
                         spot = s;
                         minPrice = s.getPricePerHour();
                     }
-                }
-            } else if (s.getSpotType().equals(SpotType.FOUR_WHEELER)) {
-                if(numberOfWheels <= 4) {
-                    if (!s.getOccupied() && s.getPricePerHour() < minPrice) {
-                        spot = s;
-                        minPrice = s.getPricePerHour();
-                    }
-                }
-            }else {
-                if (!s.getOccupied()  && s.getPricePerHour() < minPrice){
-                    spot = s;
-                    minPrice = s.getPricePerHour();
                 }
             }
         }
