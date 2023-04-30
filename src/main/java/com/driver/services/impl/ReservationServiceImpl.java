@@ -25,39 +25,41 @@ public class ReservationServiceImpl implements ReservationService {
     ParkingLotServiceImpl parkingLotService;
     @Override
     public Reservation reserveSpot(Integer userId, Integer parkingLotId, Integer timeInHours, Integer numberOfWheels) throws Exception {
-        User user;
-        try {
-            user = userRepository3.findById(userId).get();
-        }catch (Exception e){
-            throw new Exception("Cannot make reservation");
-        }
+        Reservation reservation = new Reservation();
 
-        ParkingLot parkingLot;
-        try {
-            parkingLot = parkingLotRepository3.findById(parkingLotId).get();
-        }catch (Exception e){
+        if(userRepository3.findById(userId) == null)
             throw new Exception("Cannot make reservation");
-        }
+
+       User user = userRepository3.findById(userId).get();
+
+        if(parkingLotRepository3.findById(parkingLotId) == null)
+            throw new Exception("Cannot make reservation");
+
+        ParkingLot parkingLot = parkingLotRepository3.findById(parkingLotId).get();
 
         Spot spot = null;
-        SpotType spotType = parkingLotService.getSpotType(numberOfWheels);
+
         List<Spot> spotList = parkingLot.getSpotList();
         int minPrice = Integer.MAX_VALUE;
 
         //get the spot with minimum pricePerHour
         for(Spot s : spotList){
-            if(spotType.equals(SpotType.TWO_WHEELER)) {
-                if (!s.getOccupied() && s.getPricePerHour() < minPrice){
-                    spot = s;
-                    minPrice = s.getPricePerHour();
+            if(s.getSpotType().equals(SpotType.TWO_WHEELER)) {
+                if(numberOfWheels <= 2) {
+                    if (!s.getOccupied() && s.getPricePerHour() < minPrice) {
+                        spot = s;
+                        minPrice = s.getPricePerHour();
+                    }
                 }
-            } else if (spotType.equals(SpotType.FOUR_WHEELER)) {
-                if (!s.getOccupied() && !(s.getSpotType().equals(SpotType.TWO_WHEELER)) && s.getPricePerHour() < minPrice){
-                    spot = s;
-                    minPrice = s.getPricePerHour();
+            } else if (s.getSpotType().equals(SpotType.FOUR_WHEELER)) {
+                if(numberOfWheels <= 4) {
+                    if (!s.getOccupied() && s.getPricePerHour() < minPrice) {
+                        spot = s;
+                        minPrice = s.getPricePerHour();
+                    }
                 }
             }else {
-                if (!s.getOccupied() && s.getSpotType().equals(SpotType.OTHERS) && s.getPricePerHour() < minPrice){
+                if (!s.getOccupied()  && s.getPricePerHour() < minPrice){
                     spot = s;
                     minPrice = s.getPricePerHour();
                 }
@@ -68,7 +70,7 @@ public class ReservationServiceImpl implements ReservationService {
             throw new Exception("Cannot make reservation");
 
         //now we have spot with minimum price
-        Reservation reservation = new Reservation();
+
         reservation.setSpot(spot);
         reservation.setUser(user);
         reservation.setNumberOfHours(timeInHours);
