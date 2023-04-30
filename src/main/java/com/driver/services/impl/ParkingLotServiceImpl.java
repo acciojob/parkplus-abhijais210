@@ -29,7 +29,8 @@ public class ParkingLotServiceImpl implements ParkingLotService {
         parkingLot.setAddress(address);
         parkingLot.setName(name);
 
-        return parkingLotRepository1.save(parkingLot);
+        parkingLotRepository1.save(parkingLot);
+        return parkingLot;
     }
 
     @Override
@@ -42,12 +43,13 @@ public class ParkingLotServiceImpl implements ParkingLotService {
         spot.setSpotType(getSpotType(numberOfWheels));
 
         parkingLot.getSpotList().add(spot);
-        return spotRepository1.save(spot);
+        spotRepository1.save(spot);
+        return spot;
     }
     public SpotType getSpotType(int numberOfWheels){
-        if(numberOfWheels == 2)
+        if(numberOfWheels >= 0 && numberOfWheels <= 2)
             return SpotType.TWO_WHEELER;
-        if(numberOfWheels == 4)
+        if(numberOfWheels > 2 && numberOfWheels <= 4)
             return SpotType.FOUR_WHEELER;
 
         return SpotType.OTHERS;
