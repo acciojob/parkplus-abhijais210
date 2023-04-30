@@ -57,21 +57,7 @@ public class ParkingLotServiceImpl implements ParkingLotService {
 
     @Override
     public void deleteSpot(int spotId) {
-        Optional<Spot> optionalSpot = spotRepository1.findById(spotId);
-        if(optionalSpot.isPresent()) {
-            Spot spot = optionalSpot.get();
-
-            //get all the reservation list for this spot
-            List<Reservation> reservationList = spot.getReservationList();
-
-            for (Reservation reservation : reservationList) {
-                User user = reservation.getUser();
-                user.getReservationList().remove(reservation);//remove reservation from user
-            }
-            ParkingLot parkingLot = spot.getParkingLot();
-            parkingLot.getSpotList().remove(spot);//also remove spot from parking Lot
-            spotRepository1.delete(spot);
-        }
+        spotRepository1.deleteById(spotId);
     }
 
     @Override
@@ -84,14 +70,6 @@ public class ParkingLotServiceImpl implements ParkingLotService {
 
     @Override
     public void deleteParkingLot(int parkingLotId) {
-        Optional<ParkingLot> optionalParkingLot = parkingLotRepository.findById(parkingLotId);
-        if (optionalParkingLot.isPresent()) {
-            ParkingLot parkingLot = optionalParkingLot.get();
-            List<Spot> spots = parkingLot.getSpotList();
-            for (Spot spot : spots) {
-                deleteSpot(spot.getId());
-            }
-            parkingLotRepository.deleteById(parkingLotId);
-        }
+        parkingLotRepository.deleteById(parkingLotId);
     }
 }
