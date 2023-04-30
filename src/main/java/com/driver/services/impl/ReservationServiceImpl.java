@@ -39,7 +39,30 @@ public class ReservationServiceImpl implements ReservationService {
             throw new Exception("Cannot make reservation");
         }
 
-        Spot spot = getMinAvailableSpot(numberOfWheels,parkingLot);
+        Spot spot = null;
+        SpotType spotType = parkingLotService.getSpotType(numberOfWheels);
+        List<Spot> spotList = parkingLot.getSpotList();
+        int minPrice = Integer.MAX_VALUE;
+
+        //get the spot with minimum pricePerHour
+        for(Spot s : spotList){
+            if(spotType.equals(SpotType.TWO_WHEELER)) {
+                if (!s.getOccupied() && s.getPricePerHour() < minPrice){
+                    spot = s;
+                    minPrice = s.getPricePerHour();
+                }
+            } else if (spotType.equals(SpotType.FOUR_WHEELER)) {
+                if (!s.getOccupied() && !(s.getSpotType().equals(SpotType.TWO_WHEELER)) && s.getPricePerHour() < minPrice){
+                    spot = s;
+                    minPrice = s.getPricePerHour();
+                }
+            }else {
+                if (!s.getOccupied() && s.getSpotType().equals(SpotType.OTHERS) && s.getPricePerHour() < minPrice){
+                    spot = s;
+                    minPrice = s.getPricePerHour();
+                }
+            }
+        }
 
         if(spot == null) //if no spot available
             throw new Exception("Cannot make reservation");
@@ -57,37 +80,5 @@ public class ReservationServiceImpl implements ReservationService {
         userRepository3.save(user);
         spotRepository3.save(spot);
         return reservation;
-    }
-    public Spot getMinAvailableSpot(int numberOfWheels,ParkingLot parkingLot) throws Exception {
-        //get list pf all spot in that parkingLot
-        List<Spot> spotList = parkingLot.getSpotList();
-        if(spotList.isEmpty())//if no spot in that parkingLot
-            throw new Exception("Cannot make reservation");
-
-        //get spot type
-        int minPrice = Integer.MAX_VALUE;
-        Spot spot = null;
-        SpotType spotType = parkingLotService.getSpotType(numberOfWheels);
-
-        //get the spot with minimum pricePerHour
-        for(Spot s : spotList){
-            if(spotType.equals(SpotType.TWO_WHEELER)) {
-                if (!s.getOccupied() && s.getPricePerHour() < minPrice){
-                  spot = s;
-                  minPrice = s.getPricePerHour();
-                }
-            } else if (spotType.equals(SpotType.FOUR_WHEELER)) {
-                if (!s.getOccupied() && !(s.getSpotType().equals(SpotType.TWO_WHEELER)) && s.getPricePerHour() < minPrice){
-                    spot = s;
-                    minPrice = s.getPricePerHour();
-                }
-            }else {
-                if (!s.getOccupied() && s.getSpotType().equals(SpotType.OTHERS) && s.getPricePerHour() < minPrice){
-                    spot = s;
-                    minPrice = s.getPricePerHour();
-                }
-            }
-        }
-        return  spot;
     }
 }
