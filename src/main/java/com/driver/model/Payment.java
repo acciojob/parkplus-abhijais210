@@ -4,6 +4,7 @@ import javax.persistence.*;
 
 @Entity
 public class Payment {
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private int id;
     private boolean paymentCompleted;

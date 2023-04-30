@@ -19,6 +19,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public Payment pay(Integer reservationId, int amountSent, String mode) throws Exception {
         Reservation reservation = reservationRepository2.findById(reservationId).get();
+        Payment payment = new Payment();
         //now check if it is a valid mode of transaction or not
         if(!mode.equalsIgnoreCase(String.valueOf(PaymentMode.CARD))
                 && !mode.equalsIgnoreCase(String.valueOf(PaymentMode.UPI))
@@ -31,9 +32,11 @@ public class PaymentServiceImpl implements PaymentService {
         if(amountSent < totalAmount)
             throw new Exception("Insufficient Amount");
 
-        Payment payment = reservation.getPayment();
+        payment.setReservation(reservation);
         payment.setPaymentCompleted(true);
-        payment.setPaymentMode(PaymentMode.valueOf(mode));
+        payment.setPaymentMode(PaymentMode.valueOf(mode.toUpperCase()));
+
+        reservation.setPayment(payment);
 
         return paymentRepository2.save(payment);
     }

@@ -53,5 +53,4 @@ public class ParkingLotController {
         parkingLotService.deleteParkingLot(parkingLotId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
 }

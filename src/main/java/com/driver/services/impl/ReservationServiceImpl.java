@@ -64,14 +64,6 @@ public class ReservationServiceImpl implements ReservationService {
         spot.getReservationList().add(reservation);
         spot.setOccupied(true);
 
-
-
-        //at this time also  generate payment attribute for this reservation
-        Payment payment = new Payment();
-        payment.setId(reservation.getId());
-        payment.setPaymentCompleted(false);
-        payment.setReservation(reservation);
-
         spotRepository3.save(spot);
         return reservationRepository3.save(reservation);
     }
