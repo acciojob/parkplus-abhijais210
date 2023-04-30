@@ -27,8 +27,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(Integer userId) {
         //first we delete all the reservation history of this user
-                userRepository4.deleteById(userId);
-            }
+        userRepository4.deleteById(userId);
     }
 
     @Override
